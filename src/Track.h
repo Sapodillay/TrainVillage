@@ -1,26 +1,18 @@
 #include <raylib.h>
 #include <stdlib.h>
 
-#define MAX_TRACK_SEGMENTS 20
+#define MAX_CURSORS 5
+#define MAX_TRACK_SEGMENTS 20 + MAX_CURSORS
 
-typedef struct TrackSegment TrackSegment;
+typedef struct TrackCursor TrackCursor;
 
-typedef struct Track Track;
-
-struct TrackSegment
+struct TrackCursor
 {
-	Vector3 point;
-};
-
-struct Track
-{
-	TrackSegment* TrackSegments[MAX_TRACK_SEGMENTS];
-	int trackAmount;
+	int endSeg;
 	float progress;
-	int startTrack;
-	int endTrack;
-
 };
 
-void initTrack(Track* track);
-Vector3 updatePosition(Track* track);
+void initTrack();
+void renderTrack();
+void updatePosition();
+void extendTrack();

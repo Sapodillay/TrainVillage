@@ -2,36 +2,99 @@
 
 #include "raymath.h"
 
-void initTrack(Track* track)
+static float track_progress = 0;
+static int track_amount = 0;
+
+static int end_track = MAX_TRACK_SEGMENTS - 1;
+
+static Vector3 addOffset = { 1, 0, 1 };
+
+static Vector3 segments[MAX_TRACK_SEGMENTS];
+
+static TrackCursor cursors[MAX_CURSORS];
+
+void initTrack()
 {
-    track->progress = 0;
-    track->trackAmount = 0;
-    track->startTrack = 0;
-    track->endTrack = 1;
+    Vector3 lastTrack = (Vector3){ -1 , 0 , -1 };
+    //load default startup track.
     for (int i = 0; i < MAX_TRACK_SEGMENTS; ++i)
     {
-        TrackSegment* trackSeg = (TrackSegment*)malloc(sizeof(TrackSegment));
-        trackSeg->point = (Vector3){ i, 0, i };
-        track->TrackSegments[i] = trackSeg;
-        track->trackAmount++;
+        Vector3 seg = Vector3Add(lastTrack, addOffset);
+        lastTrack = seg;
+        segments[i] = seg;
+        track_amount++;
+    }
+
+    for (int i = 0; i < MAX_CURSORS; ++i)
+    {
+        TrackCursor cursor;
+        cursor.endSeg = i;
+        cursor.progress = 0.5f;
+        cursors[i] = cursor;
+    }
+
+}
+
+//draws all track segments.
+void renderTrack()
+{
+    for (int i = 0; i < track_amount; i++)
+    {
+        DrawSphere(segments[i], 0.1f, GREEN);
+        if (i != track_amount - 1)
+        {
+            DrawLine3D(segments[i], segments[i + 1], RED);
+
+        }
     }
 }
 
-Vector3 updatePosition(Track* track)
+void updatePosition()
 {
-    if (track->progress > 100)
+    
+    size_t cursorSize = sizeof(cursors) / sizeof(TrackCursor);
+
+    //loop through all the cursors.
+    for (int i = 0; i < cursorSize; ++i)
     {
-        if (track->endTrack + 1 == track->trackAmount)
+        //increment progress.
+        //updates the end segment if reaches the end of a segment.
+        //if at the end of the track, reset to the start (In future will never reach the end as it will extend past the train).
+        if (cursors[i].progress >= 100)
         {
-            track->endTrack = 1;
-            track->startTrack = 0;
+            if (cursors[i].endSeg == MAX_TRACK_SEGMENTS)
+            {
+                cursors[i].endSeg = 1;
+                cursors[i].progress = 0;
+            }
+            else
+            {
+                cursors[i].endSeg++;
+                cursors[i].progress = 0;
+            }
         }
-        else
-        {
-            track->endTrack++;
-            track->startTrack++;
-        }
-        track->progress = 0;
+        cursors[i].progress++;
+
+        Vector3 position = Vector3Lerp(segments[cursors[i].endSeg - 1], segments[cursors[i].endSeg], cursors[i].progress / 100);
+        //Draw debug sphere
+        DrawSphere(position, 2.0f, RED);
     }
-    return Vector3Lerp(track->TrackSegments[track->startTrack]->point, track->TrackSegments[track->endTrack]->point, track->progress++ / 100);
+}
+
+void extendTrack()
+{
+    TraceLog(LOG_INFO, "Extending track.");
+    int lastEnd = end_track;
+    if (end_track == MAX_TRACK_SEGMENTS - 1)
+    {
+        end_track = 0;
+    }
+    else
+    {
+        end_track++;
+    }
+    segments[end_track] = Vector3Add(segments[lastEnd], addOffset);
+
+    TraceLog(LOG_INFO, "End track: %i", end_track);
+
 }

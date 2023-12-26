@@ -40,8 +40,8 @@ int main(void)
     initEntityManger(&entityManger, 10);
     addEntity(&entityManger);
 
-    Track track;
-    initTrack(&track);
+    //load default track
+    initTrack();
 
     
 
@@ -86,6 +86,10 @@ int main(void)
         {
             moveVector.z -= 1.0f;
         }
+        if (IsKeyPressed(KEY_C))
+        {
+            extendTrack();
+        }
 
 
         moveVector = Vector3Normalize(moveVector);
@@ -112,16 +116,8 @@ int main(void)
 
         //DrawModel(apple, (Vector3) { 0, 0, 0 }, 5.0f, WHITE);
 
-        for (int i = 0; i < track.trackAmount; i++)
-        {
-            if (i != track.trackAmount - 1)
-            {
-                DrawLine3D(track.TrackSegments[i]->point, track.TrackSegments[i + 1]->point, RED);
-
-            }
-        }
-
-        DrawSphere(updatePosition(&track), 2.0f, RED);
+        renderTrack();
+        updatePosition();
 
         DrawGrid(8.0f, 8.0f);
         EndMode3D();
