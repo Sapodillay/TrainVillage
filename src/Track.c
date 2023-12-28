@@ -85,18 +85,10 @@ void renderTrack()
     TrackCursor testCursor = { 0 };
     testCursor.endSeg = 3;
     testCursor.progress = 0.0f;
+    TrackCursor result = GetTrackForward(testCursor, distanceTest);
 
-    CursorResult result = GetTrackForward(testCursor, distanceTest);
-    if (result.didLoop)
-    {
-        TraceLog(LOG_INFO, "Looped");
-    }
-    else
-    {
-        TraceLog(LOG_INFO, "current seg: %i", result.cursor.endSeg);
-        Vector3 position = TrackToWorld(result.cursor);
-        DrawSphere(position, 0.5f, ORANGE);
-    }
+    Vector3 position = TrackToWorld(result);
+    DrawSphere(position, 1.0f, ORANGE);
 
     
     int currentTrack = getNextTrack(end_track);
@@ -168,47 +160,43 @@ Vector3 TrackToWorld(TrackCursor cursor)
     return Vector3Lerp(segments[startSeg], segments[cursor.endSeg], cursor.progress);
 }
 
-CursorResult GetTrackForward(TrackCursor cursor, float distance)
+TrackCursor GetTrackForward(TrackCursor cursor, float distance)
 {
-    //segment that the cursor is on.
+    //current segment cursor is on.
     int segment = getLastTrack(cursor.endSeg);
 
-    //distance of the segment in world distance
+    //distance of the segment in world space.
     float segDistance = segmentLength[segment];
-
-
-    //distance along the segment in world distance
+    //current distance into the segment in world space.
     float currentDistance = segDistance * cursor.progress;
-    //distance needed to the end of the segment in world distance.
+    //distance to the end of the segment.
     float distanceNeeded = segDistance - currentDistance;
 
 
-    //add distance needed to the current distance amount.
+    //add distance that is needed in world space.
     currentDistance += distance;
-
-    //calculate new segment percentage.
+    //calculate the new perctange.
     float newProgress = currentDistance / segDistance;
-    CursorResult result = { 0 };
+    TrackCursor result = { 0 };
 
-    //if it goes past the current segment.
-    if (newProgress > 1)
+    //if percentage is lower than 1, it is in the same segment. return new progress.
+    if (newProgress < 1)
     {
-        result.didLoop = false;
-
+        //is in current segment
+        result.endSeg = segment;
+        result.progress = newProgress;
+    }
+    else // else further calculate the next segments.
+    {
+        newProgress = newProgress - 1;
+        float remainingDistance = distance - distanceNeeded;
+        //create new cursor
         TrackCursor newCursor = { 0 };
         newCursor.endSeg = getNextTrack(cursor.endSeg);
 
-        newProgress = newProgress - 1;
-        float remainingDistance = distance - distanceNeeded;
-
-        result.cursor.progress = newProgress;
+        result.progress = newProgress;
         result = GetTrackForward(newCursor, remainingDistance);
-        return result;
     }
-
-    result.didLoop = false;
-    result.cursor.endSeg = cursor.endSeg;
-    result.cursor.progress = newProgress;
 
     return result;
 }
