@@ -88,8 +88,14 @@ int main(void)
         }
         if (IsKeyPressed(KEY_C))
         {
-            extendTrack();
+            extendRandom();
         }
+        if (IsKeyPressed(KEY_X))
+        {
+            trackDebug();
+        }
+
+        
 
 
         moveVector = Vector3Normalize(moveVector);
@@ -115,11 +121,12 @@ int main(void)
 
 
         //DrawModel(train, (Vector3) { 0, 0, 0 }, 5.0f, WHITE);
-
+        renderTrain();
         renderTrack();
+
         updatePosition();
 
-        DrawGrid(1280.0f, 8.0f);
+        DrawGrid(1280.0f, 10.0f);
         EndMode3D();
 
         DrawFPS(20, 20);
