@@ -28,9 +28,9 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
     DisableCursor();
 
-    Model apple = LoadModel("../../../src/apple.obj");
-    Texture2D texture = LoadTexture("../../../src/Apple.png");
-    apple.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+    Model train = LoadModel("../../../src/train.obj");
+    Texture2D texture = LoadTexture("../../../src/Train_texture.png");
+    train.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 
     //test entitymanager
 
@@ -41,7 +41,7 @@ int main(void)
     addEntity(&entityManger);
 
     //load default track
-    initTrack();
+    initTrack(&train);
 
     
 
@@ -114,12 +114,12 @@ int main(void)
 
 
 
-        //DrawModel(apple, (Vector3) { 0, 0, 0 }, 5.0f, WHITE);
+        //DrawModel(train, (Vector3) { 0, 0, 0 }, 5.0f, WHITE);
 
         renderTrack();
         updatePosition();
 
-        DrawGrid(8.0f, 8.0f);
+        DrawGrid(1280.0f, 8.0f);
         EndMode3D();
 
         DrawFPS(20, 20);

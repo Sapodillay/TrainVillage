@@ -5,6 +5,8 @@
 #define MAX_TRACK_SEGMENTS 20 + MAX_CURSORS
 
 typedef struct TrackCursor TrackCursor;
+typedef struct Train Train;
+
 
 struct TrackCursor
 {
@@ -12,7 +14,7 @@ struct TrackCursor
 	float progress;
 };
 
-void initTrack();
+void initTrack(Model* model);
 void renderTrack();
 void updatePosition();
 void extendTrack();
