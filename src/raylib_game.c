@@ -92,7 +92,7 @@ int main(void)
         }
         if (IsKeyPressed(KEY_X))
         {
-            trackDebug();
+            extendCurve();
         }
 
         
@@ -119,8 +119,6 @@ int main(void)
         BeginMode3D(camera);
 
 
-
-        //DrawModel(train, (Vector3) { 0, 0, 0 }, 5.0f, WHITE);
         renderTrain();
         renderTrack();
 

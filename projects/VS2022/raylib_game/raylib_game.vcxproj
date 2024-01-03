@@ -352,6 +352,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\EntityManager.c" />
+    <ClCompile Include="..\..\..\src\IslandMesh.c" />
     <ClCompile Include="..\..\..\src\raylib_game.c" />
     <ClCompile Include="..\..\..\src\scene.c" />
     <ClCompile Include="..\..\..\src\Track.c" />
@@ -361,6 +362,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\EntityManager.h" />
+    <ClInclude Include="..\..\..\src\IslandMesh.h" />
     <ClInclude Include="..\..\..\src\Track.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
